@@ -34,7 +34,7 @@ public class ObjectRecognizer extends Application {
         //Imgproc.cvtColor(image, image, Imgproc.COLOR_RGBA2RGB);
         System.out.println(image);
         //             blobFromImage(Mat image, double scalefactor, Size size, Scalar mean, boolean swapRB, boolean crop)
-        Mat blob = Dnn.blobFromImage(image, 1.0f, new Size(224, 224), new Scalar(104, 117, 123), false);
+        Mat blob = Dnn.blobFromImage(image, 1.0f, new Size(224, 224), new Scalar(0), false);
 
         int cols = blob.cols();
         int rows = blob.rows();
