@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.ImageView?>
+
+
+<BorderPane xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="objectrecognizer.ObjectRecognizerController">
+    <stylesheets>
+        <URL value="@objectrecognizer.css"/>
+    </stylesheets>
+
+    <bottom>
+        <HBox alignment="center">
+            <padding>
+                <Insets bottom="25" left="25" right="25" top="25" />
+            </padding>
+        </HBox>
+    </bottom>
+    <center>
+        <ImageView fx:id="currentFrame" />
+    </center>
+</BorderPane>
