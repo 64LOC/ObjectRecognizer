@@ -1,0 +1,6 @@
+bvlc_googlenet
+Is trained to classify objects - just classification. So the result in Mat is 1000 (size of object classifications) of confidence ratios. No other information like position of classified object.
+
+MobilNetSSD
+Is trained to classify AND recognize objects (including their position) so the output returned in Mat contains the rectangle boundaries as well. Mat consists of n-recognized vectors with 7 items (last four of them are the boundaries).
+

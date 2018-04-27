@@ -12,7 +12,6 @@ import org.opencv.core.*;
 import org.opencv.dnn.Dnn;
 import org.opencv.dnn.Net;
 import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.imgproc.Imgproc;
 
 public class ObjectRecognizer extends Application {
 
@@ -27,45 +26,60 @@ public class ObjectRecognizer extends Application {
     public void start(Stage primaryStage) throws Exception {
         startFX(primaryStage);
 
-        Mat image = Imgcodecs.imread("eagle.png");
+        // https://github.com/search?utf8=%E2%9C%93&q=Dnn.blobFromImage+NOT+DnnTensorFlowTest.java+NOT+Dnn.java+language%3AJava&type=Code
+        Mat image = Imgcodecs.imread("eagle.png", Imgcodecs.IMREAD_COLOR);
         System.out.println(image);
-
-        Imgproc.resize(image, image, new Size(224, 224));
-        //Imgproc.cvtColor(image, image, Imgproc.COLOR_RGBA2RGB);
-        System.out.println(image);
-        //             blobFromImage(Mat image, double scalefactor, Size size, Scalar mean, boolean swapRB, boolean crop)
-        Mat blob = Dnn.blobFromImage(image, 1.0f, new Size(224, 224), new Scalar(104, 117, 123), false);
-
-        int cols = blob.cols();
-        int rows = blob.rows();
-        System.out.println(blob);
 
         Net net = Dnn.readNetFromCaffe("bvlc_googlenet.prototxt", "bvlc_googlenet.caffemodel");
-        //Net net = Dnn.readNetFromCaffe("MobileNet_deploy.prototxt", "MobileNet_deploy.caffemodel");
+        Mat blob = Dnn.blobFromImage(image, 1.0f, new Size(224, 224), new Scalar(104, 117, 123, 0), false, false);
 
-        //https://github.com/opencv/opencv/issues/10802
         net.setInput(blob);
         Mat prob = net.forward();
 
-        System.out.println(prob.total() + ", " + prob.rows());
+        System.out.println("cols: " + prob.cols() + ", rows:" + prob.rows() + ", steps: " + prob.step1());
+        System.out.println(prob.elemSize());
+        long ll = prob.step1();
 
-        for (int irows = 0; irows < prob.rows(); irows++)
-            for (int icols = 0; icols < prob.cols(); icols++) {
-                double darray[] = prob.get(irows, icols);
-                StringBuilder dString = new StringBuilder();
-                for (int i = 0; i < darray.length; i++)
-                    dString.append(darray[i] + ", ");
-                System.out.println("col: " + icols + ", " + dString);
-            }
+        System.out.println("dim: " + prob.dims());
+        System.out.println("total: " + prob.total());
+        System.out.println("channels: " + prob.channels());
 
-        for (int i = 0; i < prob.rows(); i++) {
-            double confidence = prob.get(i, 2)[0];
-            System.out.print(confidence);
-            int classId = (int) prob.get(i, 1)[0];
-            System.out.println(" : " + classId);
+        for (int i = 0; i < 3; i++)
+            System.out.println(i + ": " + prob.step1(i));
+
+        //    prob = prob.reshape(1, 142);
+        System.out.println(prob);
+        System.out.println("cols: " + prob.cols() + ", rows:" + prob.rows());
+        prob.type();
+        /*
+        double darray[];
+        for (int irows = 0; irows < prob.rows(); irows++) {
+            darray = prob.get(irows, 2);
+            System.out.println(darray + ", " + darray[0] + ", " + irows);
         }
 
+        for (int icols = 0; icols < prob.cols(); icols++) {
+            darray = prob.get(0, icols);
+            System.out.println(darray + ", " + darray[0] + ", " + icols + ", " + darray.length);
+        }
+         */
+        float farray[] = new float[7];
+        for (int icols = 0; icols < prob.cols(); icols++) {
+            prob.get(0, icols, farray);
+            System.out.print(icols + ": ");
+            for (int i = 0; i < farray.length; i++)
+                System.out.print(farray[i] + ", ");
+            System.out.println("");
+        }
+
+        double maxConfidence = -1;
+        int classId = -1;
+
+        System.out.println("max confidence: " + maxConfidence);
+        System.out.println("classID: " + classId);
+
         Image imageToShow = Utils.mat2Image(image);
+
         controller.show(imageToShow);
         //https://docs.opencv.org/3.4.0/d0/d6c/tutorial_dnn_android.html.
     }
